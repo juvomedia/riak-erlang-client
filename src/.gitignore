@@ -10,3 +10,4 @@ Makefile
 Makefile.am
 erl_crash.dump
 fw-erl-app-template.app.in
+riakclient_pb.hrl
