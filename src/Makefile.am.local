@@ -1,0 +1,32 @@
+# put whatever (auto)make commands here, they will be included from Makefile.am
+
+BUILT_SOURCES = riakclient_pb.hrl
+
+riakclient_pb.beam riakclient_pb.hrl: riakclient.proto
+	erl -noshell -noinput -eval 'protobuffs_compile:scan_file ("riakclient.proto")' -s init stop
+
+dist_erlappsrc_DATA = 				\
+  $(sort					\
+      $(wildcard *.erl)				\
+      $(wildcard *.xrl)				\
+      $(wildcard *.yrl)				\
+      $(patsubst %.xrl,%.erl,$(wildcard *.xrl))	\
+      $(patsubst %.yrl,%.erl,$(wildcard *.yrl)))
+
+dist_erlappinclude_DATA =	\
+  $(sort			\
+      riakclient_pb.hrl		\
+      $(wildcard *.hrl))
+
+erlappebin_SCRIPTS =					\
+  @FW_ERL_APP_NAME@.app					\
+  riakclient_pb.beam					\
+  $(patsubst %.erl, %.beam, $(filter %.erl, $(dist_erlappsrc_DATA)))
+
+CLEANFILES += 		\
+  riakclient_pb.hrl	\
+  riakclient_pb.beam
+
+check_DATA =			\
+  .dialyzer_ok			\
+  .@FW_ERL_APP_NAME@.app_ok
